@@ -1,0 +1,15 @@
+# Project
+name = example
+version = 0.1.0
+description = Test library to demonstrate layout.
+
+dependency[foo].git = https://ztrldgit01.ztr.biz/bbos/foo.git
+dependency[foo].rev = 91e8ae48cbe6cf98751e84987874bc7636389f32
+
+dependency[bar].git = https://ztrldgit01.ztr.biz/bbos/bar.git
+dependency[foo].rev = 91e8ae48cbe6cf98751e84987874bc7636389f32
+
+dependency[baz].git = https://ztrldgit01.ztr.biz/bbos/baz.git
+dependency[baz].rev = 91e8ae48cbe6cf98751e84987874bc7636389f32
+
+dependency[qux].path = /home/brian/git/test/quux

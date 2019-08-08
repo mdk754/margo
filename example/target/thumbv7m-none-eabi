@@ -1,0 +1,24 @@
+arch = arm
+vendor = unknown
+os = none
+endian = little
+
+ar = arm-none-eabi-ar
+ar-flags =
+
+as = arm-none-eabi-as
+as-flags =
+
+cc = arm-none-eabi-gcc
+cc-flags =
+
+cxx = arm-none-eabi-g++
+cxx-flags =
+
+cpp = arm-none-eabi-gcc -E
+cpp-flags =
+
+ld = arm-none-eabi-ld
+ld-pre-flags =
+ld-post-flags =
+ld-libs =
