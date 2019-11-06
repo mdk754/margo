@@ -1,0 +1,18 @@
+name = example
+version = 0.1.0
+description = Test library to demonstrate layout.
+
+exclude = [      \
+  "src/foo.cpp", \
+  "src/bar.cpp"  \
+]
+
+feature.1 = [ "a", "b", "c" ]
+feature.2 = [ "a" ]
+feature.3 = []
+
+dependency.a = { git = "https://example.com/a.git", ref = "master", optional = "true" }
+dependency.b = { git = "https://example.com/b.git", ref = "55a7990" }
+dependency.c = { git = "https://example.com/c.git" }
+dependency.d = { path = "../d" }
+dependency.e = {}
