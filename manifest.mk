@@ -36,11 +36,11 @@ define manifest.parse
     define local.add_package
         ifneq "$${d}" ""
             ${1}.dependencies += $${d}
-            $$(call package_ref.create,${1}.dependencies.$${d},$${d},$${dependency[$${d}]})
+            $$(call package_ref.create,${1}.dependencies.$${d},$${d},$${dependency.$${d}})
         endif
     endef
 
-    $$(foreach d,$$(patsubst dependencies.%,%,$$(filter dependencies.%,$${.VARIABLES})),\
+    $$(foreach d,$$(patsubst dependency.%,%,$$(filter dependency.%,$${.VARIABLES})),\
         $$(eval $${local.add_package}))
 endef
 
@@ -49,10 +49,10 @@ endef
 # @param2  Directory of the package.
 # @warning Use with `eval` only.
 define manifest.load
-    local.filename := ${2}/manifest.mk
+    local.filename := ${2}/manifest
 
     ifeq "$$(wildcard $${local.filename})" ""
-        $$(error Could not find a file named 'manifest.mk' in '${2}'.)
+        $$(error Could not find a file named 'manifest' in '${2}'.)
     endif
 
     $$(eval $$(call manifest.parse,${1},$${local.filename}))
