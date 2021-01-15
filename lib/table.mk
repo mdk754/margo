@@ -1,8 +1,7 @@
 # Functions for dealing with inline tables
 ifneq "${mod_table}" "1"
 
-local.comma:=,
-local.quote:="
+include ${margo_path}/lib/util.mk
 
 # @brief   Gets the contents of the table without bracing.
 # @param1  Name of the variable that is an inline table.
@@ -25,7 +24,7 @@ mod_table.key_at = $(firstword $(call mod_table.at,${1},${2}))
 # @brief   Gets the value at a specific position in the table.
 # @param1  Name of the variable that is an inline table.
 # @param2  Zero-based index of key value pair to access.
-mod_table.value_at = $(subst $(local.quote),,$(subst $(local.comma),,$(word 3,$(call mod_table.at,${1},${2}))))
+mod_table.value_at = $(subst $("),,$(subst $(,),,$(word 3,$(call mod_table.at,${1},${2}))))
 
 # @brief   Gets the value for a given key in the table.
 # @param1  Name of the variable that is an inline table.

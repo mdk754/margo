@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+: ${JOBS:=$(grep -c ^processor /proc/cpuinfo)}
+exec make -f $(dirname "$(readlink -f "$0")")/margo-make \
+  --no-builtin-rules \
+  --no-builtin-variables \
+  --jobs=${JOBS} \
+  --load-average=${JOBS} \
+  $*

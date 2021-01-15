@@ -2,9 +2,13 @@ name = example
 version = 0.1.0
 description = Test library to demonstrate layout.
 
-exclude = [      \
+exclude = [ \
   "src/foo.cpp", \
-  "src/bar.cpp"  \
+  "src/bar.cpp" \
+]
+
+include = [         \
+  "vendor/sample.c" \
 ]
 
 feature.1 = [ "a", "b", "c" ]
@@ -12,7 +16,13 @@ feature.2 = [ "a" ]
 feature.3 = []
 
 dependency.a = { git = "https://example.com/a.git", ref = "master", optional = "true" }
-dependency.b = { git = "https://example.com/b.git", ref = "55a7990" }
-dependency.c = { git = "https://example.com/c.git" }
+dependency.b = { git = "https://example.com/b.git", ref = "55a7990", default_features = "false", features = "a c" }
+dependency.c = { git = "https://example.com/c.git", optional = "true" }
 dependency.d = { path = "../d" }
-dependency.e = {}
+dependency.e = { path = "hi" }
+
+dev_dependencies = a
+default_features = 1
+
+target.armv6.dependency.zarm = {}
+target.x86.dependency.zx86 = {}

@@ -1,0 +1,185 @@
+.DEFAULT_GOAL := help
+
+margo_path := $(patsubst %/,%,$(dir $(realpath $(firstword ${MAKEFILE_LIST}))))
+
+margo_min = $(firstword $(sort ${1} ${2}))
+margo_max = $(lastword $(sort ${1} ${2}))
+margo_min_make_version := 4.0
+margo_min_make_version_error := margo requires GNU Make `v${margo_min_make_version}` or newer
+
+ifeq "${MAKE_VERSION}" ""
+  $(info error: GNU Make not detected.)
+  $(info )
+  $(info ${margo_min_make_version_error})
+  $(info )
+  $(error Fatal)
+endif
+ifneq "${margo_min_make_version}" "$(call margo_min,${margo_min_make_version},${MAKE_VERSION})"
+  $(info error: incompatible GNU Make version detected.)
+  $(info )
+  $(info ${margo_min_make_version_error})
+  $(info $(shell printf '    ... the running version is `v${MAKE_VERSION}`'))
+  $(info )
+  $(error Fatal)
+endif
+
+ifeq "${VERBOSE}" "y"
+  Q :=
+else
+  Q := @
+endif
+
+include ${margo_path}/lib/manifest.mk
+include ${margo_path}/lib/package_graph.mk
+include ${margo_path}/lib/package_ref.mk
+
+ifneq "$(filter build check clean,${MAKECMDGOALS})" ""
+  root_pkg := { path = "." }
+  $(eval $(call mod_manifest.name,manifest,root_name))
+  $(eval $(call mod_package_ref.create,root,${root_name},root_pkg))
+  $(eval $(call mod_package_graph.create,graph,root,/tmp/margo))
+
+  ifeq "$(filter build help,${MAKECMDGOALS})" "build"
+    $(foreach pkg,${graph.packages},$(eval $(call mod_package.create_rules,graph.packages.${pkg},build)))
+  endif
+endif
+
+.PHONY: verbose
+verbose:
+	@true
+
+.PHONY: bin lib
+bin: verbose
+lib: verbose
+
+.PHONY: help
+help: command_format:="    %-15s %s\n"
+
+.PHONY: build check clean new init run
+
+ifeq "$(if $(filter help,${MAKECMDGOALS}),true,$(if ${MAKECMDGOALS},false,true))" "true"
+
+build: verbose
+check: verbose
+clean: verbose
+new: verbose
+init: verbose
+run: verbose
+
+ifeq "$(filter-out help,${MAKECMDGOALS})" ""
+
+help:
+	@printf "An opinionated C / C++ package manager\n\n"
+	@printf "Usage:\n    margo [options] <command>\n\n"
+	@printf "Options:\n"
+	@printf ${command_format} verbose "Use verbose output"
+	@printf "\n"
+	@printf "Commands:\n"
+	@printf ${command_format} build "Compile the local package"
+	@printf ${command_format} check "Analyze the local package and report errors, but don't build object files"
+	@printf ${command_format} clean "Remove the target directory"
+	@printf ${command_format} init "Create a new margo package in the current directory"
+	@printf ${command_format} new "Create a new margo package"
+	@printf ${command_format} run "Run a binary from the local package"
+	@printf ${command_format} help "Show this help text"
+	@printf "\nSee 'margo help <command>' for more information on a specific command.\n\n"
+
+else
+ifeq "$(filter-out build help,${MAKECMDGOALS})" ""
+
+help:
+	@printf "Compile the local package and all of its dependencies\n\n"
+	@printf "Usage:\n    margo build [options]\n\n"
+	@printf "Options:\n"
+	@printf ${command_format} verbose "Use verbose output"
+	@printf "\n"
+
+else
+ifeq "$(filter-out check help,${MAKECMDGOALS})" ""
+
+help:
+	@printf "Check the local package and all of its dependencies for errors\n\n"
+	@printf "Usage:\n    margo check [options]\n\n"
+	@printf "Options:\n"
+	@printf ${command_format} verbose "Use verbose output"
+	@printf "\n"
+
+else
+ifeq "$(filter-out clean help,${MAKECMDGOALS})" ""
+
+help:
+	@printf "Remove build artifacts from a prior run\n\n"
+	@printf "Usage:\n    margo clean [options]\n\n"
+	@printf "Options:\n"
+	@printf ${command_format} verbose "Use verbose output"
+	@printf "\n"
+
+else
+ifeq "$(filter-out new help,${MAKECMDGOALS})" ""
+
+help:
+	@printf "Create a new margo package at <path>\n\n"
+	@printf "Usage:\n    margo new dir=<path> [options]\n\n"
+	@printf "Options:\n"
+	@printf ${command_format} lib "Use a library template"
+	@printf ${command_format} bin "Use a binary (application) template [default]"
+	@printf ${command_format} verbose "Use verbose output"
+	@printf "\n"
+
+else
+ifeq "$(filter-out init help,${MAKECMDGOALS})" ""
+
+help:
+	@printf "Create a new margo package in the current directory\n\n"
+	@printf "Usage:\n    margo init [options]\n\n"
+	@printf "Options:\n"
+	@printf ${command_format} lib "Use a library template"
+	@printf ${command_format} bin "Use a binary (application) template [default]"
+	@printf ${command_format} verbose "Use verbose output"
+	@printf "\n"
+
+else
+ifeq "$(filter-out run help,${MAKECMDGOALS})" ""
+
+help:
+	@printf "Run a binary from the local package\n\n"
+	@printf "Usage:\n    margo run [options]\n\n"
+	@printf "Options:\n"
+	@printf ${command_format} "bin=<name>" "Name of the bin target to run"
+	@printf ${command_format} verbose "Use verbose output"
+	@printf "\n"
+
+else
+
+$(info error: command '$(filter-out help,${MAKECMDGOALS})' does not exist.)
+$(error Fatal)
+
+endif
+endif
+endif
+endif
+endif
+endif
+endif
+else
+
+build: build/${root_name}/postbuild_token
+
+check:
+	false
+
+clean:
+	false
+
+new:
+	false
+
+init:
+	false
+
+run:
+	false
+
+endif
+
+# $(foreach line,$(sort $(filter graph.%,$(.VARIABLES))),$(info $(line) = $($(line))))
